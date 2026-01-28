@@ -8,8 +8,9 @@ const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
 
 /**
  * Helper to resize an image to a maximum dimension, reducing token usage.
+ * Slightly increased to 1280 to capture embroidery details better.
  */
-const resizeImage = (base64Str: string, maxDimension: number = 1024): Promise<string> => {
+const resizeImage = (base64Str: string, maxDimension: number = 1280): Promise<string> => {
   return new Promise((resolve) => {
     const img = new Image();
     img.src = base64Str;
@@ -34,7 +35,7 @@ const resizeImage = (base64Str: string, maxDimension: number = 1024): Promise<st
       canvas.height = height;
       const ctx = canvas.getContext('2d');
       ctx?.drawImage(img, 0, 0, width, height);
-      resolve(canvas.toDataURL('image/jpeg', 0.8)); // 0.8 quality JPEG
+      resolve(canvas.toDataURL('image/jpeg', 0.85)); // 0.85 quality to keep textures sharp
     };
   });
 };
@@ -65,37 +66,29 @@ export const generateTryOnImage = async (
     // 3. Call the API with the Flash Model (Stable & Fast)
     const response = await ai.models.generateContent({
       model: 'gemini-2.5-flash-image',
-      config: {
-        generationConfig: {
-          temperature: 0.1, // Very low temperature for deterministic output
-        }
-      },
       contents: {
         parts: [
           {
-            text: `Perform a high-fidelity virtual try-on task for an Indian fashion boutique. 
+            text: `You are an expert digital tailor specializing in high-end Indian ethnic wear.
+            
+            YOUR GOAL:
+            Composite the garment from the 'Garment Image' onto the person in the 'Person Image'.
+            
+            STRICT RULES FOR TEXTURE PRESERVATION:
+            1. DO NOT HALLUCINATE OR GENERATE NEW PATTERNS. You must map the pixels of the input garment exactly onto the body.
+            2. PRESERVE EMBROIDERY: All zari work, beads, borders, and prints visible in the 'Garment Image' must appear in the final output.
+            3. EXACT COLOR MATCH: The output garment color must be identical to the input garment. Do not apply color grading.
+            
+            DRAPING INSTRUCTIONS:
+            - If the garment is a Saree: Ensure the pleats are physically accurate at the waist and the Pallu drapes naturally over the shoulder.
+            - If the garment is a Lehenga: Ensure the skirt volume is realistic.
+            - Maintain the person's exact facial features, skin tone, and body shape.
             
             Inputs:
-            1. 'Person Image': A photo of a customer.
-            2. 'Garment Image': A photo of a specific piece of Indian ethnic clothing (e.g., Saree, Lehenga, Kurta, Sherwani).
-
-            Task:
-            Generate a photorealistic image of the person from the first image wearing the garment from the second image.
-
-            STRICT CONSTRAINT CHECKLIST (VIOLATION = FAILURE):
-            1. [CRITICAL] EXACT COLOR MATCH: The color of the garment in the output MUST be identical to the 'Garment Image'.
-            2. [CRITICAL] NO HALLUCINATIONS: Do NOT add new colors, borders, sequins, or patterns that are not present in the 'Garment Image'.
-            3. [CRITICAL] TEXTURE PRESERVATION: Preserve the specific fabric texture (e.g. silk, cotton, net) exactly as seen.
-            4. IDENTITY PRESERVATION: Maintain the person's exact face, skin tone, body shape, and pose.
-            5. REALISTIC DRAPE: Wrap the Indian garment naturally around the body using physics-based draping.
-            6. BACKGROUND: Keep the original background of the 'Person Image'.
-
-            Negative Constraints:
-            - Do NOT color correct the garment.
-            - Do NOT add jewelry or accessories.
-            - Do NOT change the lighting of the garment.
-
-            Output only the final image.`
+            - Image 1: Person (Target)
+            - Image 2: Garment (Source)
+            
+            Output only the resulting image.`
           },
           {
             inlineData: {
@@ -110,6 +103,12 @@ export const generateTryOnImage = async (
             }
           }
         ]
+      },
+      config: {
+        imageConfig: {
+          aspectRatio: "3:4", // Portrait mode for full body
+          imageSize: "2K"     // High resolution to resolve embroidery details
+        }
       }
     });
 
@@ -131,7 +130,7 @@ export const generateTryOnImage = async (
   } catch (error: any) {
     console.error("Gemini API Error:", error);
     if (error.message?.includes('429')) {
-      throw new Error("Traffic is high. Please wait 1 minute and try again.");
+      throw new Error("Traffic is high. Please wait 1 minute and try again, or check your API key quota.");
     }
     throw new Error(error.message || "Failed to generate try-on image.");
   }

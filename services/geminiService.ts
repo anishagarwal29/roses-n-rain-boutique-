@@ -65,8 +65,8 @@ export const generateTryOnImage = async (
     // 3. Call the API
     let response;
     try {
-      // Try the Pro model first (High Quality)
-      response = await ai.models.generateContent({
+      // Try the Pro model first (High Quality) with a 15-second timeout
+      const proModelPromise = ai.models.generateContent({
         model: 'gemini-3-pro-image-preview',
         contents: {
           parts: [
@@ -104,9 +104,17 @@ export const generateTryOnImage = async (
           ]
         }
       });
+
+      // 15-second timeout
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error("Timeout")), 15000)
+      );
+
+      response = await Promise.race([proModelPromise, timeoutPromise]);
+
     } catch (error: any) {
-      if (error.message?.includes('429') || error.message?.includes('Resource has been exhausted')) {
-        console.warn("Gemini Pro 429, falling back to Flash...");
+      if (error.message?.includes('429') || error.message?.includes('Resource has been exhausted') || error.message === 'Timeout') {
+        console.warn("Gemini Pro issue (Timeout or 429), falling back to Flash...");
         // Fallback to Flash model (Higher Rate Limits)
         response = await ai.models.generateContent({
           model: 'gemini-2.5-flash-image',

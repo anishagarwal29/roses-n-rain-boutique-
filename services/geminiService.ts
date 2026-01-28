@@ -78,7 +78,13 @@ export const generateTryOnImage = async (
             text: `You are an expert digital tailor specializing in high-end Indian ethnic wear.
             
             YOUR GOAL:
-            Composite the garment from the 'Garment Image' onto the person in the 'Person Image'.
+            You are a "Virtual Try-On" generator.
+            You MUST generate an image of the PERSON from Image 1, fully wearing the garment from Image 2.
+            
+            FAILURE CONDITIONS (DO NOT DO THIS):
+            - Do NOT just return the garment image.
+            - Do NOT just return the person image without the change.
+            - The output MUST be a composite of Person + Garment.
             
             STRICT RULES FOR TEXTURE & COLOR PRESERVATION:
             1. [CRITICAL] NO LIGHTING CHANGES: Do NOT brighten, overexpose, or wash out the garment. Keep the exact brightness and contrast of the 'Garment Image'.
@@ -95,12 +101,13 @@ export const generateTryOnImage = async (
             - NO overexposure.
             - NO color grading.
             - NO studio lighting effects that alter fabric perception.
+            - NO floating garments.
             
             Inputs:
-            - Image 1: Person (Target)
-            - Image 2: Garment (Source)
+            - Image 1 (BASE): Person (Target)
+            - Image 2 (OVERLAY): Garment (Source)
             
-            Output only the resulting image.`
+            Output only the final composite image.`
           },
           {
             inlineData: {

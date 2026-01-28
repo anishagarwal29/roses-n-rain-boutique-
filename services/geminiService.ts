@@ -11,7 +11,7 @@ const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
  * Helper to resize an image to a maximum dimension, reducing token usage.
  * Slightly increased to 1280 to capture embroidery details better.
  */
-const resizeImage = (base64Str: string, maxDimension: number = 1280): Promise<string> => {
+const resizeImage = (base64Str: string, maxDimension: number = 1536): Promise<string> => {
   return new Promise((resolve) => {
     const img = new Image();
     img.src = base64Str;
@@ -36,7 +36,7 @@ const resizeImage = (base64Str: string, maxDimension: number = 1280): Promise<st
       canvas.height = height;
       const ctx = canvas.getContext('2d');
       ctx?.drawImage(img, 0, 0, width, height);
-      resolve(canvas.toDataURL('image/jpeg', 0.85)); // 0.85 quality to keep textures sharp
+      resolve(canvas.toDataURL('image/jpeg', 0.95)); // 0.95 High Quality
     };
   });
 };

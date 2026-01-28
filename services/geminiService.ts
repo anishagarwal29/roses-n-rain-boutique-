@@ -4,6 +4,7 @@ import { ImageUpload } from "../types";
 const GEMINI_API_KEY = process.env.API_KEY || '';
 
 // Initialize the client
+// Last updated: 2026-01-28 (Force Deploy)
 const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
 
 /**

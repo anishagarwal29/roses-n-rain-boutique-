@@ -62,86 +62,45 @@ export const generateTryOnImage = async (
     const personBase64 = resizedPerson.split(',')[1];
     const clothingBase64 = resizedClothing.split(',')[1];
 
-    // 3. Call the API
-    let response;
-    try {
-      // Try the Pro model first (High Quality) with a 15-second timeout
-      const proModelPromise = ai.models.generateContent({
-        model: 'gemini-3-pro-image-preview',
-        contents: {
-          parts: [
-            {
-              text: `Perform a high-fidelity virtual try-on task for an Indian fashion boutique. 
-              
-              Inputs:
-              1. 'Person Image': A photo of a customer.
-              2. 'Garment Image': A photo of a specific piece of Indian ethnic clothing (e.g., Saree, Lehenga, Kurta, Sherwani).
-  
-              Task:
-              Generate a photorealistic image of the person from the first image wearing the garment from the second image.
-  
-              STRICT CONSTRAINT CHECKLIST:
-              1. [CRITICAL] COLOR FIDELITY: The color of the garment in the output MUST match the 'Garment Image' exactly. Do not apply filters or lighting that shifts the hue/saturation of the fabric.
-              2. [CRITICAL] PATTERN PRESERVATION: Retain all embroidery, beadwork, prints, and texture details from the 'Garment Image'. Do not simplify or hallucinate new patterns.
-              3. IDENTITY PRESERVATION: Maintain the person's exact face, skin tone, body shape, and pose.
-              4. REALISTIC DRAPE: Wrap the Indian garment naturally around the body. If it is a Saree or Dupatta, ensure the folds and pleats follow the laws of physics and traditional draping styles.
-              5. BACKGROUND: Keep the original background of the 'Person Image'.
-  
-              Output only the final image.`
-            },
-            {
-              inlineData: {
-                mimeType: 'image/jpeg',
-                data: personBase64
-              }
-            },
-            {
-              inlineData: {
-                mimeType: 'image/jpeg',
-                data: clothingBase64
-              }
+    // 3. Call the API with the Flash Model (Stable & Fast)
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash-image',
+      contents: {
+        parts: [
+          {
+            text: `Perform a high-fidelity virtual try-on task for an Indian fashion boutique. 
+            
+            Inputs:
+            1. 'Person Image': A photo of a customer.
+            2. 'Garment Image': A photo of a specific piece of Indian ethnic clothing (e.g., Saree, Lehenga, Kurta, Sherwani).
+
+            Task:
+            Generate a photorealistic image of the person from the first image wearing the garment from the second image.
+
+            STRICT CONSTRAINT CHECKLIST:
+            1. [CRITICAL] COLOR FIDELITY: The color of the garment in the output MUST match the 'Garment Image' exactly. Do not apply filters or lighting that shifts the hue/saturation of the fabric.
+            2. [CRITICAL] PATTERN PRESERVATION: Retain all embroidery, beadwork, prints, and texture details from the 'Garment Image'. Do not simplify or hallucinate new patterns.
+            3. IDENTITY PRESERVATION: Maintain the person's exact face, skin tone, body shape, and pose.
+            4. REALISTIC DRAPE: Wrap the Indian garment naturally around the body. If it is a Saree or Dupatta, ensure the folds and pleats follow the laws of physics and traditional draping styles.
+            5. BACKGROUND: Keep the original background of the 'Person Image'.
+
+            Output only the final image.`
+          },
+          {
+            inlineData: {
+              mimeType: 'image/jpeg',
+              data: personBase64
             }
-          ]
-        }
-      });
-
-      // 15-second timeout
-      const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error("Timeout")), 15000)
-      );
-
-      response = await Promise.race([proModelPromise, timeoutPromise]);
-
-    } catch (error: any) {
-      if (error.message?.includes('429') || error.message?.includes('Resource has been exhausted') || error.message === 'Timeout') {
-        console.warn("Gemini Pro issue (Timeout or 429), falling back to Flash...");
-        // Fallback to Flash model (Higher Rate Limits)
-        response = await ai.models.generateContent({
-          model: 'gemini-2.5-flash-image',
-          contents: {
-            parts: [
-              {
-                text: `Perform a high-fidelity virtual try-on task. Generate a photorealistic image of the person wearing the garment. Maintain identity and garment details.`
-              },
-              {
-                inlineData: {
-                  mimeType: 'image/jpeg',
-                  data: personBase64
-                }
-              },
-              {
-                inlineData: {
-                  mimeType: 'image/jpeg',
-                  data: clothingBase64
-                }
-              }
-            ]
+          },
+          {
+            inlineData: {
+              mimeType: 'image/jpeg',
+              data: clothingBase64
+            }
           }
-        });
-      } else {
-        throw error;
+        ]
       }
-    }
+    });
 
     // Extract image from response
     if (response.candidates && response.candidates.length > 0) {
@@ -161,7 +120,7 @@ export const generateTryOnImage = async (
   } catch (error: any) {
     console.error("Gemini API Error:", error);
     if (error.message?.includes('429')) {
-      throw new Error("Traffic is high even for fallback model. Please wait 1 minute.");
+      throw new Error("Traffic is high. Please wait 1 minute and try again.");
     }
     throw new Error(error.message || "Failed to generate try-on image.");
   }

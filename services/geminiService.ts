@@ -65,6 +65,18 @@ export const generateTryOnImage = async (
     // 3. Call the API with the Flash Model (Stable & Fast)
     const response = await ai.models.generateContent({
       model: 'gemini-2.5-flash-image',
+      config: {
+        safetySettings: [
+          {
+            category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT',
+            threshold: 'BLOCK_ONLY_HIGH',
+          },
+          {
+            category: 'HARM_CATEGORY_HARASSMENT',
+            threshold: 'BLOCK_ONLY_HIGH',
+          },
+        ]
+      },
       contents: {
         parts: [
           {

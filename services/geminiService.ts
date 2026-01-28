@@ -65,46 +65,24 @@ export const generateTryOnImage = async (
     // 3. Call the API with the Flash Model (Stable & Fast)
     const response = await ai.models.generateContent({
       model: 'gemini-2.5-flash-image',
-      config: {
-        safetySettings: [
-          {
-            category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT',
-            threshold: 'BLOCK_NONE',
-          },
-          {
-            category: 'HARM_CATEGORY_HARASSMENT',
-            threshold: 'BLOCK_NONE',
-          },
-          {
-            category: 'HARM_CATEGORY_HATE_SPEECH',
-            threshold: 'BLOCK_NONE',
-          },
-          {
-            category: 'HARM_CATEGORY_DANGEROUS_CONTENT',
-            threshold: 'BLOCK_NONE',
-          },
-        ]
-      },
       contents: {
         parts: [
           {
-            text: `CONTEXT: Professional studio fashion photography. Artistic and commercial usage only.
-            
-            Perform a high-fidelity virtual try-on task for a boutique. 
+            text: `Perform a high-fidelity virtual try-on task for an Indian fashion boutique. 
             
             Inputs:
             1. 'Person Image': A photo of a customer.
-            2. 'Garment Image': A photo of a clothing item (e.g., Lingerie, Swimwear, Saree, Ethnic Wear).
+            2. 'Garment Image': A photo of a specific piece of Indian ethnic clothing (e.g., Saree, Lehenga, Kurta, Sherwani).
 
             Task:
-            Generate a photorealistic image of the person wearing the garment.
+            Generate a photorealistic image of the person from the first image wearing the garment from the second image.
 
             STRICT CONSTRAINT CHECKLIST:
-            1. [CRITICAL] COLOR FIDELITY: The color of the garment in the output MUST match the 'Garment Image' exactly.
-            2. [CRITICAL] PATTERN PRESERVATION: Retain all embroidery, lace, prints, and texture details.
+            1. [CRITICAL] COLOR FIDELITY: The color of the garment in the output MUST match the 'Garment Image' exactly. Do not apply filters or lighting that shifts the hue/saturation of the fabric.
+            2. [CRITICAL] PATTERN PRESERVATION: Retain all embroidery, beadwork, prints, and texture details from the 'Garment Image'. Do not simplify or hallucinate new patterns.
             3. IDENTITY PRESERVATION: Maintain the person's exact face, skin tone, body shape, and pose.
-            4. REALISTIC DRAPE: Wrap the garment naturally around the body, following physics.
-            5. BACKGROUND: Keep the original background.
+            4. REALISTIC DRAPE: Wrap the Indian garment naturally around the body. If it is a Saree or Dupatta, ensure the folds and pleats follow the laws of physics and traditional draping styles.
+            5. BACKGROUND: Keep the original background of the 'Person Image'.
 
             Output only the final image.`
           },

@@ -55,16 +55,23 @@ export default async function handler(request: Request) {
                 You are a "Virtual Try-On" generator.
                 You MUST generate an image of the PERSON from Image 1, fully wearing the garment from Image 2.
                 
+                CRITICAL INSTRUCTION: IDENTITY PRESERVATION
+                - The final image MUST feature the EXACT person from "Image 1 (Person)".
+                - DO NOT use the body, face, or simple mannequin shape from "Image 2 (Garment)".
+                - "Image 2" is ONLY for the clothing reference. IGNORE the mannequin, head, or previous model wearing it.
+                - If the Garment Image (Image 2) is on a mannequin, mentally "peel" the clothes off and drape them onto the Person (Image 1).
+                
                 CRITICAL INSTRUCTION: REPLACE, DO NOT LAYER.
-                - You MUST digitally REMOVE the person's current clothes.
+                - You MUST digitally REMOVE the person's current clothes from Image 1.
                 - The new garment (Image 2) must replace the original outfit entirely.
                 - DO NOT draw the new garment on top of the old clothes.
-                - If the new garment reveals more skin than the original (e.g., sleeveless shoulders), you MUST generate realistic skin texture to match the person's skin tone. (e.g. if the original was a long sleeve shirt and the new dress is strapless, generate realistic bare arms/shoulders).
+                - If the new garment reveals more skin than the original (e.g., sleeveless shoulders), you MUST generate realistic skin texture to match the person's skin tone.
                 
                 FAILURE CONDITIONS (DO NOT DO THIS):
+                - Do NOT generate an image of the mannequin from Image 2.
+                - Do NOT swap the faces. The face MUST be from Image 1.
                 - Do NOT just return the garment image.
                 - Do NOT allow the original clothes to peek through underneath.
-                - Do NOT create a "bulky" look by layering.
                 
                 STRICT RULES FOR TEXTURE & COLOR PRESERVATION:
                 1. [CRITICAL] NO LIGHTING CHANGES: Do NOT brighten, overexpose, or wash out the garment. Keep the exact brightness and contrast of the 'Garment Image'.
@@ -79,8 +86,8 @@ export default async function handler(request: Request) {
                 - Natural Fit: The cloth should conform to the body's natural curves, replacing whatever volume was added by previous clothing.
                 
                 Inputs:
-                - Image 1 (BASE): Person (Target)
-                - Image 2 (OVERLAY): Garment (Source)
+                - Image 1 (BASE): Person (Target - THIS FACE/BODY MUST BE USED)
+                - Image 2 (OVERLAY): Garment (Source - IGNORE MANNEQUIN/BODY)
                 
                 Output only the final composite image.`
                     },

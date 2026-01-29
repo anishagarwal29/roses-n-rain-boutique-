@@ -1,8 +1,8 @@
 import { GoogleGenAI, HarmCategory, HarmBlockThreshold } from "@google/genai";
 import { ImageUpload } from "../types";
 
-// In Vite, env vars must start with VITE_ to be exposed to the client
-const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY || import.meta.env.VITE_API_KEY || '';
+// NOTE: Changed process.env to import.meta.env for Vite Client compatibility
+const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY || '';
 
 // Initialize the client
 const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
@@ -53,18 +53,14 @@ export const generateTryOnImage = async (
   personImage: ImageUpload,
   clothingImage: ImageUpload
 ): Promise<string> => {
-  if (!GEMINI_API_KEY) {
-    throw new Error("Missing API Key. Please add VITE_GEMINI_API_KEY to your .env file.");
-  }
-
   if (!personImage.base64 || !clothingImage.base64) {
     throw new Error("Images are missing base64 data.");
   }
 
   try {
     // 1. Resize images to reduce token count (Critical for Free Tier)
-    const resizedPerson = await resizeImage(personImage.base64, 800);
-    const resizedClothing = await resizeImage(clothingImage.base64, 800);
+    const resizedPerson = await resizeImage(personImage.base64);
+    const resizedClothing = await resizeImage(clothingImage.base64);
 
     // 2. Strip headers for API
     const personBase64 = resizedPerson.split(',')[1];
@@ -76,39 +72,21 @@ export const generateTryOnImage = async (
       contents: {
         parts: [
           {
-            // PROMPT UPDATED: Uses the "Photo Editor" Persona to prevent Mannequin hallucinations
-            text: `You are a professional Texture Transfer & Photo Retouching AI.
-                
-            TASK:
-            Transfer the clothing texture from "Image 2" onto the person in "Image 1".
-            
-            STRICT COMPOSITING RULES:
-            1. BASE IMAGE (Image 1): usage = MASTER CANVAS. 
-                - You MUST keep the exact pixel dimensions, background, lighting, and pose of Image 1.
-                - The final output MUST look like Image 1, just with different clothes.
-                - DO NOT CHANGE THE PERSON'S FACE OR BODY SHAPE.
-            
-            2. SOURCE TEXTURE (Image 2): usage = TEXTURE REFERENCE ONLY.
-                - Extract only the fabric pattern/color from this image.
-                - IGNORE the mannequin, human model, or background in Image 2.
-                - DO NOT generate the mannequin.
-            
-            3. EXECUTION STEPS:
-                A. Identify the shirt/dress/outfit in Image 2.
-                B. Segment the body of the person in Image 1.
-                C. Warp the fabric from Image 2 to fit the body of Image 1 strictly.
-                D. If the new clothing revealed skin (e.g. sleeveless), generate realistic skin for the person in Image 1.
-            
-            CRITICAL FAILURE CONDITIONS:
-            - If the output looks like a mannequin -> FAILED.
-            - If the face changes -> FAILED.
-            - If the background changes from Image 1 -> FAILED.
-            
-            Inputs:
-            - Image 1 (BASE): Person (Target)
-            - Image 2 (OVERLAY): Garment (Source)
-            
-            RETURN ONLY THE TRANSFORMED IMAGE 1.`
+            // Concise but STRICT prompt to handle mannequins correctly
+            text: `VIRTUAL TRY-ON TASK
+
+            INPUTS:
+            [Image 1]: TARGET USER. This is the person who must appear in the final photo.
+            [Image 2]: CLOTHING REFERENCE. This shows the Saree/Lehenga/Outfit. It may be on a MANNEQUIN, a model, or a hanger.
+
+            INSTRUCTIONS:
+            1. Take the clothes from [Image 2] and put them on the person in [Image 1].
+            2. IGNORE THE MANNEQUIN/MODEL in [Image 2]. Do not generate the mannequin's face or plastic body. 
+            3. The final image MUST show the face, skin tone, and body pose of the PERSON in [Image 1].
+            4. Wrap the garment naturally around the user's body shape.
+            5. PRESERVE DETAILS: Keep the exact embroidery, patterns, and colors of the garment.
+
+            Output: A high-quality photorealistic image of Person 1 wearing Outfit 2.`
           },
           {
             inlineData: {
@@ -132,6 +110,9 @@ export const generateTryOnImage = async (
           { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_ONLY_HIGH },
           { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_ONLY_HIGH },
         ],
+        imageConfig: {
+          aspectRatio: "3:4"
+        }
       }
     });
 
@@ -147,9 +128,8 @@ export const generateTryOnImage = async (
       if (candidate.content && candidate.content.parts) {
         for (const part of candidate.content.parts) {
           if (part.inlineData && part.inlineData.data) {
-            return `data:image/png;base64,${part.inlineData.data}`; // Fixed MIME type assumption 
+            return `data:image/png;base64,${part.inlineData.data}`;
           }
-          // Handle text output if necessary (though we expect image)
         }
       }
     }
@@ -160,15 +140,15 @@ export const generateTryOnImage = async (
     console.error("Gemini API Error:", error);
 
     if (error.message?.includes('403')) {
-      throw new Error("Permission Denied. Check API Key or Model access.");
+      throw new Error("Permission Denied. API Key issue or Model access restricted.");
     }
 
     if (error.message?.includes('429')) {
-      throw new Error("Too many requests. Please wait 30 seconds and try again.");
+      throw new Error("Too many requests. The free plan has limits on image generation. Please wait 30 seconds and try again.");
     }
 
     if (error.message?.includes('503')) {
-      throw new Error("The AI service is overloaded. Please try again.");
+      throw new Error("The AI service is currently overloaded. Please try again in a moment.");
     }
 
     throw new Error(error.message || "Failed to generate try-on image.");

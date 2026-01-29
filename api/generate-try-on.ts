@@ -49,47 +49,34 @@ export default async function handler(request: Request) {
             contents: {
                 parts: [
                     {
-                        text: `You are an expert digital tailor specializing in high-end Indian ethnic wear.
+                        text: `You are a professional Texture Transfer & Photo Retouching AI.
                 
-                YOUR GOAL:
-                You are a "Virtual Try-On" generator.
-                You MUST generate an image of the PERSON from Image 1, fully wearing the garment from Image 2.
+                TASK:
+                Transfer the clothing texture from "Image 2" onto the person in "Image 1".
                 
-                CRITICAL INSTRUCTION: IDENTITY PRESERVATION
-                - The final image MUST feature the EXACT person from "Image 1 (Person)".
-                - DO NOT use the body, face, or simple mannequin shape from "Image 2 (Garment)".
-                - "Image 2" is ONLY for the clothing reference. IGNORE the mannequin, head, or previous model wearing it.
-                - If the Garment Image (Image 2) is on a mannequin, mentally "peel" the clothes off and drape them onto the Person (Image 1).
+                STRICT COMPOSITING RULES:
+                1. BASE IMAGE (Image 1): usage = MASTER CANVAS. 
+                   - You MUST keep the exact pixel dimensions, background, lighting, and pose of Image 1.
+                   - The final output MUST look like Image 1, just with different clothes.
+                   - DO NOT CHANGE THE PERSON'S FACE OR BODY SHAPE.
                 
-                CRITICAL INSTRUCTION: REPLACE, DO NOT LAYER.
-                - You MUST digitally REMOVE the person's current clothes from Image 1.
-                - The new garment (Image 2) must replace the original outfit entirely.
-                - DO NOT draw the new garment on top of the old clothes.
-                - If the new garment reveals more skin than the original (e.g., sleeveless shoulders), you MUST generate realistic skin texture to match the person's skin tone.
+                2. SOURCE TEXTURE (Image 2): usage = TEXTURE REFERENCE ONLY.
+                   - Extract only the fabric pattern/color from this image.
+                   - IGNORE the mannequin, human model, or background in Image 2.
+                   - DO NOT generate the mannequin.
                 
-                FAILURE CONDITIONS (DO NOT DO THIS):
-                - Do NOT generate an image of the mannequin from Image 2.
-                - Do NOT swap the faces. The face MUST be from Image 1.
-                - Do NOT just return the garment image.
-                - Do NOT allow the original clothes to peek through underneath.
+                3. EXECUTION STEPS:
+                   A. Identify the shirt/dress/outfit in Image 2.
+                   B. Segment the body of the person in Image 1.
+                   C. Warp the fabric from Image 2 to fit the body of Image 1 strictly.
+                   D. If the new clothing revealed skin (e.g. sleeveless), generate realistic skin for the person in Image 1.
                 
-                STRICT RULES FOR TEXTURE & COLOR PRESERVATION:
-                1. [CRITICAL] NO LIGHTING CHANGES: Do NOT brighten, overexpose, or wash out the garment. Keep the exact brightness and contrast of the 'Garment Image'.
-                2. [CRITICAL] EXACT COLOR MATCH: The output HEX codes of the fabric must match the input. Dark colors must STAY DARK.
-                3. PRESERVE EMBROIDERY: All zari work, beads, borders, and prints visible in the 'Garment Image' must appear in the final output.
-                4. NO HALLUCINATIONS: Do not generate new patterns or accessories.
+                CRITICAL FAILURE CONDITIONS:
+                - If the output looks like a mannequin -> FAILED.
+                - If the face changes -> FAILED.
+                - If the background changes from Image 1 -> FAILED.
                 
-                DRAPING INSTRUCTIONS:
-                - If the garment is a Saree: Ensure the pleats are physically accurate at the waist and the Pallu drapes naturally over the shoulder.
-                - If the garment is a Lehenga: Ensure the skirt volume is realistic.
-                - Maintain the person's exact facial features, skin tone, and body shape.
-                - Natural Fit: The cloth should conform to the body's natural curves, replacing whatever volume was added by previous clothing.
-                
-                Inputs:
-                - Image 1 (BASE): Person (Target - THIS FACE/BODY MUST BE USED)
-                - Image 2 (OVERLAY): Garment (Source - IGNORE MANNEQUIN/BODY)
-                
-                Output only the final composite image.`
+                RETURN ONLY THE TRANSFORMED IMAGE 1.`
                     },
                     {
                         inlineData: {

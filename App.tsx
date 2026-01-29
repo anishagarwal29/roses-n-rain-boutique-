@@ -279,11 +279,7 @@ export default function App() {
           <div className="lg:col-span-7">
             <div className="h-full min-h-[600px] bg-white rounded-3xl p-2 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-brand-100 relative overflow-hidden flex flex-col">
               {/* Decorative header within the frame */}
-              <div className="absolute top-0 left-0 right-0 p-6 flex justify-between items-start z-10 pointer-events-none">
-                <div className="text-brand-200 font-serif text-9xl opacity-10 leading-none select-none">
-                  Roses N Rain
-                </div>
-              </div>
+
 
               {result.imageUrl ? (
                 <div className="relative flex-1 rounded-2xl overflow-hidden group">

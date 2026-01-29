@@ -293,6 +293,25 @@ export const ClothingGallery: React.FC<ClothingGalleryProps> = ({ onSelect, onBa
                     </div>
                 </div>
             )}
+
+            {/* Footer with Reset */}
+            <footer className="max-w-6xl mx-auto px-4 py-8 mt-12 border-t border-brand-100 flex justify-center">
+                <button
+                    onClick={() => {
+                        if (confirm("This will erase your custom added items and restore the default collection. Are you sure?")) {
+                            localStorage.removeItem('clothing-items');
+                            setItems(INITIAL_ITEMS);
+                            alert("Collection reset to defaults!");
+                        }
+                    }}
+                    className="text-brand-400 hover:text-red-500 text-sm transition-colors flex items-center gap-2"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                    </svg>
+                    Reset Collection to Defaults
+                </button>
+            </footer>
         </div>
     );
 };

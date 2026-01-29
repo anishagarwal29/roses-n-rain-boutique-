@@ -55,10 +55,16 @@ export default async function handler(request: Request) {
                 You are a "Virtual Try-On" generator.
                 You MUST generate an image of the PERSON from Image 1, fully wearing the garment from Image 2.
                 
+                CRITICAL INSTRUCTION: REPLACE, DO NOT LAYER.
+                - You MUST digitally REMOVE the person's current clothes.
+                - The new garment (Image 2) must replace the original outfit entirely.
+                - DO NOT draw the new garment on top of the old clothes.
+                - If the new garment reveals more skin than the original (e.g., sleeveless shoulders), you MUST generate realistic skin texture to match the person's skin tone. (e.g. if the original was a long sleeve shirt and the new dress is strapless, generate realistic bare arms/shoulders).
+                
                 FAILURE CONDITIONS (DO NOT DO THIS):
                 - Do NOT just return the garment image.
-                - Do NOT just return the person image without the change.
-                - The output MUST be a composite of Person + Garment.
+                - Do NOT allow the original clothes to peek through underneath.
+                - Do NOT create a "bulky" look by layering.
                 
                 STRICT RULES FOR TEXTURE & COLOR PRESERVATION:
                 1. [CRITICAL] NO LIGHTING CHANGES: Do NOT brighten, overexpose, or wash out the garment. Keep the exact brightness and contrast of the 'Garment Image'.
@@ -70,12 +76,7 @@ export default async function handler(request: Request) {
                 - If the garment is a Saree: Ensure the pleats are physically accurate at the waist and the Pallu drapes naturally over the shoulder.
                 - If the garment is a Lehenga: Ensure the skirt volume is realistic.
                 - Maintain the person's exact facial features, skin tone, and body shape.
-                
-                Negative Constraints:
-                - NO overexposure.
-                - NO color grading.
-                - NO studio lighting effects that alter fabric perception.
-                - NO floating garments.
+                - Natural Fit: The cloth should conform to the body's natural curves, replacing whatever volume was added by previous clothing.
                 
                 Inputs:
                 - Image 1 (BASE): Person (Target)

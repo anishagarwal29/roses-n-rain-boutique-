@@ -154,7 +154,7 @@ export default function App() {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
                 </svg>
               </div>
-              <span className="font-serif text-2xl font-bold text-brand-900 tracking-tight">Lumière</span>
+              <span className="font-serif text-2xl font-bold text-brand-900 tracking-tight">Roses N Rain</span>
             </div>
 
             {/* Nav Actions */}
@@ -281,7 +281,7 @@ export default function App() {
               {/* Decorative header within the frame */}
               <div className="absolute top-0 left-0 right-0 p-6 flex justify-between items-start z-10 pointer-events-none">
                 <div className="text-brand-200 font-serif text-9xl opacity-10 leading-none select-none">
-                  Lumière
+                  Roses N Rain
                 </div>
               </div>
 
@@ -337,7 +337,7 @@ export default function App() {
       </main>
 
       <footer className="max-w-6xl mx-auto px-6 mt-20 py-8 border-t border-brand-100 text-center text-brand-400 text-sm">
-        <p>&copy; {new Date().getFullYear()} Lumière Indian Boutique. Powered by AI.</p>
+        <p>&copy; {new Date().getFullYear()} Roses N Rain Indian Boutique. Powered by AI.</p>
       </footer>
     </div>
   );

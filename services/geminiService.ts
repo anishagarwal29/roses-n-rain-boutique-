@@ -1,4 +1,4 @@
-import { GoogleGenAI, HarmCategory, HarmBlockThreshold } from "@google/genai";
+import { GoogleGenAI } from "@google/genai";
 import { ImageUpload } from "../types";
 
 // NOTE: Changed process.env to import.meta.env for Vite Client compatibility
@@ -76,17 +76,17 @@ export const generateTryOnImage = async (
             text: `VIRTUAL TRY-ON TASK
 
             INPUTS:
-            [Image 1]: TARGET USER. This is the person who must appear in the final photo.
-            [Image 2]: CLOTHING REFERENCE. This shows the Saree/Lehenga/Outfit. It may be on a MANNEQUIN, a model, or a hanger.
+            [Image 1]: TARGET PERSON (The User).
+            [Image 2]: CLOTHING REFERENCE (The Outfit).
 
-            INSTRUCTIONS:
-            1. Take the clothes from [Image 2] and put them on the person in [Image 1].
-            2. IGNORE THE MANNEQUIN/MODEL in [Image 2]. Do not generate the mannequin's face or plastic body. 
-            3. The final image MUST show the face, skin tone, and body pose of the PERSON in [Image 1].
-            4. Wrap the garment naturally around the user's body shape.
-            5. PRESERVE DETAILS: Keep the exact embroidery, patterns, and colors of the garment.
+            STRICT INSTRUCTIONS:
+            1. GENERATE a photorealistic image of the TARGET PERSON from [Image 1] wearing the outfit from [Image 2].
+            2. FACE & BODY: You MUST preserve the facial features, skin tone, and body proportions of the TARGET PERSON in [Image 1].
+            3. IGNORE MANNEQUIN: If [Image 2] shows a mannequin or another model, completely ignore their body/face. Only extract the clothing fabric/pattern.
+            4. FIT: Drape the clothing naturally on the TARGET PERSON's pose.
+            5. DETAILS: Keep the exact embroidery and color of the clothing.
 
-            Output: A high-quality photorealistic image of Person 1 wearing Outfit 2.`
+            Output: The final generated image only.`
           },
           {
             inlineData: {
@@ -103,12 +103,12 @@ export const generateTryOnImage = async (
         ]
       },
       config: {
-        // Explicitly set safety settings to BLOCK_ONLY_HIGH to avoid false positives on body images
+        // Using string literals cast to any to avoid runtime Enum import issues while satisfying TS
         safetySettings: [
-          { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_ONLY_HIGH },
-          { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_ONLY_HIGH },
-          { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_ONLY_HIGH },
-          { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_ONLY_HIGH },
+          { category: 'HARM_CATEGORY_HARASSMENT' as any, threshold: 'BLOCK_ONLY_HIGH' as any },
+          { category: 'HARM_CATEGORY_HATE_SPEECH' as any, threshold: 'BLOCK_ONLY_HIGH' as any },
+          { category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT' as any, threshold: 'BLOCK_ONLY_HIGH' as any },
+          { category: 'HARM_CATEGORY_DANGEROUS_CONTENT' as any, threshold: 'BLOCK_ONLY_HIGH' as any },
         ],
         imageConfig: {
           aspectRatio: "3:4"

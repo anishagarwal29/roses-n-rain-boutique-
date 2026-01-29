@@ -85,8 +85,9 @@ export const generateTryOnImage = async (
             3. IGNORE MANNEQUIN: If [Image 2] shows a mannequin or another model, completely ignore their body/face. Only extract the clothing fabric/pattern.
             4. FIT: Drape the clothing naturally on the TARGET PERSON's pose.
             5. DETAILS: Keep the exact embroidery and color of the clothing.
+            6. SINGLE USER ONLY: The output must contain EXACTLY ONE person (The Target Person). Do NOT generate a side-by-side comparison. Do NOT include the original person standing next to the new one.
 
-            Output: The final generated image only.`
+            Output: The final generated image only. containing a SINGLE person.`
           },
           {
             inlineData: {

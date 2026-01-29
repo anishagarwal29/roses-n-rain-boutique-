@@ -9,7 +9,7 @@ interface ClothingItem {
 }
 
 // Mock data generator
-const MOCK_CLOTHING: ClothingItem[] = Array.from({ length: 12 }).map((_, i) => ({
+const INITIAL_ITEMS: ClothingItem[] = Array.from({ length: 12 }).map((_, i) => ({
     id: `dress-${i + 1}`,
     title: i === 0 ? "Signature Red Cocktail Dress" : `Elegant Evening Gown ${i + 1}`,
     src: '/red-dress.jpg',
@@ -22,6 +22,32 @@ interface ClothingGalleryProps {
 }
 
 export const ClothingGallery: React.FC<ClothingGalleryProps> = ({ onSelect, onBack }) => {
+    const [items, setItems] = React.useState<ClothingItem[]>(INITIAL_ITEMS);
+    const [isUploadOpen, setIsUploadOpen] = React.useState(false);
+    const [newItem, setNewItem] = React.useState({
+        title: '',
+        price: '',
+        file: null as File | null
+    });
+
+    const handleAddItem = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!newItem.file || !newItem.title || !newItem.price) return;
+
+        const objectUrl = URL.createObjectURL(newItem.file);
+
+        const itemToAdd: ClothingItem = {
+            id: `custom-${Date.now()}`,
+            title: newItem.title,
+            price: newItem.price.startsWith('$') ? newItem.price : `$${newItem.price}`,
+            src: objectUrl
+        };
+
+        setItems([itemToAdd, ...items]);
+        setIsUploadOpen(false);
+        setNewItem({ title: '', price: '', file: null });
+    };
+
     return (
         <div className="min-h-screen bg-[#f9f8f6] animate-fade-in">
             <nav className="bg-white border-b border-brand-100 sticky top-0 z-50">
@@ -51,7 +77,20 @@ export const ClothingGallery: React.FC<ClothingGalleryProps> = ({ onSelect, onBa
                 </header>
 
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                    {MOCK_CLOTHING.map((item) => (
+                    {/* Add New Item Card */}
+                    <button
+                        onClick={() => setIsUploadOpen(true)}
+                        className="group bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 border-2 border-dashed border-brand-200 hover:border-brand-400 flex flex-col items-center justify-center aspect-[3/4] gap-4"
+                    >
+                        <div className="w-16 h-16 rounded-full bg-brand-50 flex items-center justify-center text-brand-400 group-hover:bg-brand-100 group-hover:text-brand-600 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                            </svg>
+                        </div>
+                        <span className="font-serif text-lg text-brand-800">Add New Item</span>
+                    </button>
+
+                    {items.map((item) => (
                         <div
                             key={item.id}
                             className="group bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 border border-brand-100 overflow-hidden cursor-pointer"
@@ -76,6 +115,85 @@ export const ClothingGallery: React.FC<ClothingGalleryProps> = ({ onSelect, onBa
                     ))}
                 </div>
             </main>
+
+            {/* Upload Modal */}
+            {isUploadOpen && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                    <div
+                        className="absolute inset-0 bg-brand-900/40 backdrop-blur-sm"
+                        onClick={() => setIsUploadOpen(false)}
+                    ></div>
+                    <div className="relative bg-white rounded-2xl max-w-md w-full p-8 shadow-2xl">
+                        <button
+                            onClick={() => setIsUploadOpen(false)}
+                            className="absolute top-4 right-4 text-brand-400 hover:text-brand-800 p-2"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+
+                        <h2 className="text-2xl font-serif text-brand-900 mb-6">Add New Outfit</h2>
+
+                        <form onSubmit={handleAddItem} className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium text-brand-700 mb-1">Upload Image</label>
+                                <div className="border-2 border-dashed border-brand-200 rounded-lg p-6 text-center hover:bg-brand-50 transition-colors cursor-pointer relative">
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                        onChange={(e) => {
+                                            if (e.target.files?.[0]) {
+                                                setNewItem({ ...newItem, file: e.target.files[0] });
+                                            }
+                                        }}
+                                        required
+                                    />
+                                    {newItem.file ? (
+                                        <p className="text-brand-800 font-medium truncate">{newItem.file.name}</p>
+                                    ) : (
+                                        <div className="text-brand-400">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 mx-auto mb-2">
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+                                            </svg>
+                                            <span className="text-sm">Click to upload image</span>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium text-brand-700 mb-1">Name</label>
+                                <input
+                                    type="text"
+                                    value={newItem.title}
+                                    onChange={(e) => setNewItem({ ...newItem, title: e.target.value })}
+                                    className="w-full px-4 py-2 rounded-lg border border-brand-200 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+                                    placeholder="e.g. Royal Blue Silk Saree"
+                                    required
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium text-brand-700 mb-1">Price</label>
+                                <input
+                                    type="text"
+                                    value={newItem.price}
+                                    onChange={(e) => setNewItem({ ...newItem, price: e.target.value })}
+                                    className="w-full px-4 py-2 rounded-lg border border-brand-200 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+                                    placeholder="e.g. $250"
+                                    required
+                                />
+                            </div>
+
+                            <Button type="submit" fullWidth className="mt-4">
+                                Add to Collection
+                            </Button>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

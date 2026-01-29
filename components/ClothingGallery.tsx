@@ -10,16 +10,9 @@ interface ClothingItem {
 
 // Mock data generator
 const INITIAL_ITEMS: ClothingItem[] = [
-    { id: 'dress-1', title: "Signature Red Cocktail Dress", src: '/red-dress.jpg', price: '$295' },
     { id: 'dress-2', title: "Royal Blue Silk Saree", src: '/blue-saree.png', price: '$350' },
     { id: 'dress-3', title: "Emerald Green Lehenga", src: '/green-lehenga.png', price: '$420' },
-    { id: 'dress-4', title: "Yellow Floral Anarkali", src: '/yellow-anarkali.png', price: '$180' },
-    ...Array.from({ length: 8 }).map((_, i) => ({
-        id: `dress-${i + 5}`,
-        title: `Elegant Evening Gown ${i + 5}`,
-        src: '/red-dress.jpg', // Placeholder for remaining items
-        price: `$${150 + i * 10}`
-    }))
+    { id: 'dress-4', title: "Yellow Floral Anarkali", src: '/yellow-anarkali.png', price: '$180' }
 ];
 
 interface ClothingGalleryProps {

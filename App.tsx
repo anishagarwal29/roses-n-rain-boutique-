@@ -188,14 +188,7 @@ export default function App() {
 
       {/* Main Content */}
       <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-12">
-        <header className="text-center mb-16">
-          <h1 className="font-serif text-5xl md:text-6xl text-brand-900 mb-6">
-            Ethnic Wear Studio
-          </h1>
-          <p className="text-xl text-brand-700 max-w-2xl mx-auto font-light leading-relaxed">
-            Experience authentic Indian couture from home. Visualize our intricate embroideries and vibrant colors on yourself instantly.
-          </p>
-        </header>
+
 
         {/* Try-On Interface */}
         <div className="bg-white p-8 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-brand-100 relative">

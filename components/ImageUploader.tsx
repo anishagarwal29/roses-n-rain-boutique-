@@ -49,7 +49,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ label, imageState,
         className={`
           relative flex flex-col items-center justify-center w-full h-80 
           border-2 border-dashed rounded-xl transition-all duration-300
-          ${imageState.previewUrl ? 'border-brand-400 bg-white' : 'border-brand-200 bg-white hover:bg-slate-50 hover:border-brand-300'}
+          ${imageState.previewUrl ? 'border-transparent bg-white' : 'border-brand-200 bg-white hover:bg-slate-50 hover:border-brand-300'}
         `}
       >
         {imageState.previewUrl ? (
@@ -57,7 +57,8 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ label, imageState,
             <img
               src={imageState.previewUrl}
               alt="Preview"
-              className="w-full h-full object-cover rounded-xl brightness-110 saturate-110 contrast-105"
+              className="w-full h-full object-cover rounded-xl"
+              style={{ filter: 'brightness(1.15)' }}
             />
             <button
               onClick={handleClear}

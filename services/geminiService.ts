@@ -84,9 +84,10 @@ export const generateTryOnImage = async (
             2. FACE & BODY: You MUST preserve the facial features, skin tone, and body proportions of the TARGET PERSON in [Image 1].
             3. IGNORE MANNEQUIN: If [Image 2] shows a mannequin or another model, completely ignore their body/face. Only extract the clothing fabric/pattern.
             4. FIT: Drape the clothing naturally on the TARGET PERSON's pose.
-            5. DETAILS: Keep the exact embroidery and color of the clothing.
-            6. LIGHTING: Preserve the lighting and brightness of the original photo. Do NOT darken the image.
-            7. SINGLE USER ONLY: The output must contain EXACTLY ONE person (The Target Person). Do NOT generate a side-by-side comparison. Do NOT include the original person standing next to the new one.
+            5. REPLACE CLOTHING: You MUST completely REMOVE the original clothing of the TARGET PERSON before applying the new outfit. Do NOT overlay the new outfit on top of the old one. The original clothes should not be visible.
+            6. DETAILS: Keep the exact embroidery and color of the clothing.
+            7. LIGHTING: Preserve the lighting and brightness of the original photo. Do NOT darken the image.
+            8. SINGLE USER ONLY: The output must contain EXACTLY ONE person (The Target Person). Do NOT generate a side-by-side comparison. Do NOT include the original person standing next to the new one.
 
             Output: The final generated image only. containing a SINGLE person.`
           },

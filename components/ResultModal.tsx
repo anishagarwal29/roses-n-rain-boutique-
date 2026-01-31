@@ -30,12 +30,12 @@ export const ResultModal: React.FC<ResultModalProps> = ({ isOpen, onClose, resul
 
                 <h2 className="text-3xl font-serif text-brand-900 mb-6">Your Look</h2>
 
-                <div className="w-full h-[80vh] max-h-[800px] flex items-center justify-center bg-brand-50 rounded-xl overflow-hidden mb-6 relative border border-brand-100">
+                <div className="w-full h-[60vh] max-h-[600px] flex items-center justify-center bg-brand-50 rounded-xl overflow-hidden mb-6 relative border border-brand-100">
                     {result.imageUrl ? (
                         <img
                             src={result.imageUrl}
                             alt="Virtual Try-On Result"
-                            className="w-full h-full object-contain"
+                            className="w-full h-full object-contain brightness-110"
                         />
                     ) : result.loading ? (
                         <div className="flex flex-col items-center animate-pulse">

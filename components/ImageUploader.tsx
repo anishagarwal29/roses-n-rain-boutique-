@@ -44,19 +44,19 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ label, imageState,
       <label htmlFor={id} className="text-brand-900 font-serif font-semibold text-lg">
         {label}
       </label>
-      
-      <div 
+
+      <div
         className={`
           relative flex flex-col items-center justify-center w-full h-80 
           border-2 border-dashed rounded-xl transition-all duration-300
-          ${imageState.previewUrl ? 'border-brand-400 bg-white' : 'border-brand-200 bg-brand-50 hover:bg-brand-100 hover:border-brand-300'}
+          ${imageState.previewUrl ? 'border-brand-400 bg-white' : 'border-brand-200 bg-white hover:bg-slate-50 hover:border-brand-300'}
         `}
       >
         {imageState.previewUrl ? (
           <>
-            <img 
-              src={imageState.previewUrl} 
-              alt="Preview" 
+            <img
+              src={imageState.previewUrl}
+              alt="Preview"
               className="w-full h-full object-cover rounded-xl"
             />
             <button
@@ -70,7 +70,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ label, imageState,
             </button>
           </>
         ) : (
-          <div 
+          <div
             className="flex flex-col items-center justify-center text-brand-400 cursor-pointer w-full h-full"
             onClick={() => fileInputRef.current?.click()}
           >

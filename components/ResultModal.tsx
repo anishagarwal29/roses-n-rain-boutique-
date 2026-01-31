@@ -18,7 +18,7 @@ export const ResultModal: React.FC<ResultModalProps> = ({ isOpen, onClose, resul
                 className="absolute inset-0 bg-brand-900/40 backdrop-blur-sm transition-opacity"
                 onClick={onClose}
             ></div>
-            <div className="relative bg-white rounded-2xl max-w-2xl w-full p-8 shadow-2xl transform transition-all border border-brand-100 flex flex-col items-center">
+            <div className="relative bg-white rounded-2xl max-w-2xl w-full py-16 px-8 shadow-2xl transform transition-all border border-brand-100 flex flex-col items-center">
                 <button
                     onClick={onClose}
                     className="absolute top-4 right-4 text-brand-400 hover:text-brand-800 transition-colors p-2"

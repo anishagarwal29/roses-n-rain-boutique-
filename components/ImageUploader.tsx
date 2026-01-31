@@ -57,7 +57,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ label, imageState,
             <img
               src={imageState.previewUrl}
               alt="Preview"
-              className="w-full h-full object-cover rounded-xl brightness-110"
+              className="w-full h-full object-cover rounded-xl brightness-125 contrast-105"
             />
             <button
               onClick={handleClear}
